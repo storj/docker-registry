@@ -54,3 +54,5 @@ require (
 // In our case, github.com/spf13/viper occurs as a dependency, but is unused,
 // so we can ignore the minimum versions of grpc and jwt-go that it specifies.
 replace google.golang.org/grpc => google.golang.org/grpc v0.0.0-20160317175043-d3ddb4469d5a
+
+replace google.golang.org/api v0.1.0 => google.golang.org/api v0.0.0-20160322025152-9bf6e6e569ff
