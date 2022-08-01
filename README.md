@@ -1,4 +1,31 @@
-# Distribution
+# Docker registry with Storj DCS backend
+
+This repository contains a fork of https://github.com/distribution/distribution with a custom storage driver, supporting Storj decentralized cloud.
+
+Can be tested with starting local registry:
+
+
+```
+docker run -p 9999:5000 -e REGISTRY_STORAGE_STORJ_BUCKET=docker -e REGISTRY_STORAGE_STORJ_ACCESSGRANT=$(cat /tmp/grant) ghcr.io/elek/distribution:618d19fb
+```
+
+And pushing/pulling image locally:
+
+```
+docker push localhost:9999/elek/herbstag
+```
+
+The image will be storared in the Storj bucket
+
+The driver is also available in this PR: https://github.com/distribution/distribution/pull/3638
+
+Which is blocked by waiting for better extension support.
+
+> We're thinking about making these pluggable and and separating them into dedicated GH repos where they could be maintained by folks with the right expertise in the specific storage driver area.
+
+This work is originally started by [Michal Niewrzal](https://github.com/mniewrzal) at https://github.com/mniewrzal/distribution.
+
+# Original README starts here.
 
 The toolset to pack, ship, store, and deliver content.
 
