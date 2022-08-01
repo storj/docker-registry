@@ -6,7 +6,7 @@ Can be tested with starting local registry:
 
 
 ```
-docker run -p 9999:5000 -e REGISTRY_STORAGE_STORJ_BUCKET=docker -e REGISTRY_STORAGE_STORJ_ACCESSGRANT=$(cat /tmp/grant) ghcr.io/elek/distribution:618d19fb
+docker run -p 9999:5000 -e REGISTRY_STORAGE_STORJ_BUCKET=docker -e REGISTRY_STORAGE_STORJ_ACCESSGRANT=$(cat /tmp/grant) storjlabs/docker-registry
 ```
 
 And pushing/pulling image locally:
@@ -24,6 +24,16 @@ Which is blocked by waiting for better extension support.
 > We're thinking about making these pluggable and and separating them into dedicated GH repos where they could be maintained by folks with the right expertise in the specific storage driver area.
 
 This work is originally started by [Michal Niewrzal](https://github.com/mniewrzal) at https://github.com/mniewrzal/distribution.
+
+# Development
+
+Project can be built inside a docker container with `docker buildx`:
+
+```
+docker buildx build --push -t storjlabs/docker-registry .
+```
+
+(Note: push also pushes the image to DockerHub)
 
 # Original README starts here.
 
