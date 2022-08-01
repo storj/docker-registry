@@ -36,3 +36,4 @@ bin/*
 *.sublime-project
 *.sublime-workspace
 .idea/*
+client/build
