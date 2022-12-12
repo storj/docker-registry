@@ -8,7 +8,9 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	_ "unsafe" // for go:linkname
 
+	"github.com/jtolio/eventkit"
 	"github.com/spacemonkeygo/monkit/v3"
 	"github.com/zeebo/errs"
 
@@ -19,6 +21,7 @@ import (
 )
 
 var mon = monkit.Package()
+var evs = eventkit.Package()
 
 // We use packageError.Wrap/New instead of plain errs.Wrap/New to add a prefix "uplink" to every error
 // message emitted by the Uplink library.
@@ -40,6 +43,7 @@ var ErrSegmentsLimitExceeded = errors.New("segments limit exceeded")
 // ErrPermissionDenied is returned when the request is denied due to invalid permissions.
 var ErrPermissionDenied = errors.New("permission denied")
 
+//go:linkname convertKnownErrors
 func convertKnownErrors(err error, bucket, key string) error {
 	switch {
 	case errors.Is(err, io.EOF):

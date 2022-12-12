@@ -70,11 +70,12 @@ pipeline {
                     }
                     steps {
                         sh 'go vet ./...'
-                        sh 'go test -parallel 4 -p 6 -vet=off $COVERFLAGS -timeout 20m -json -race ./... | tee .build/tests.json | xunit -out .build/tests.xml'
+                        sh 'go test -parallel 4 -p 6 -vet=off $COVERFLAGS -timeout 20m -json -race ./... > .build/tests.json'
                     }
 
                     post {
                         always {
+                            sh script: 'cat .build/tests.json | xunit -out .build/tests.xml', returnStatus: true
                             sh script: 'cat .build/tests.json | tparse -all -top -slow 100', returnStatus: true
                             archiveArtifacts artifacts: '.build/tests.json'
                             junit '.build/tests.xml'
@@ -95,6 +96,8 @@ pipeline {
                     environment {
                         STORJ_TEST_COCKROACH = 'cockroach://root@localhost:26257/testcockroach?sslmode=disable'
                         STORJ_TEST_POSTGRES = 'postgres://postgres@localhost/teststorj?sslmode=disable'
+                        STORJ_TEST_COCKROACH_NODROP = 'true'
+                        STORJ_TEST_LOG_LEVEL = 'info'
                         COVERFLAGS = "${ env.BRANCH_NAME == 'main' ? '-coverprofile=../.build/testsuite_coverprofile -coverpkg=storj.io/uplink/...' : ''}"
                     }
                     steps {
@@ -102,12 +105,15 @@ pipeline {
                         sh 'psql -U postgres -c \'create database teststorj;\''
                         dir('testsuite'){
                             sh 'go vet ./...'
-                            sh 'go test -parallel 4 -p 6 -vet=off $COVERFLAGS -timeout 20m -json -race ./... | tee ../.build/testsuite.json | xunit -out ../.build/testsuite.xml'
+                            sh 'go test -parallel 4 -p 6 -vet=off $COVERFLAGS -timeout 20m -json -race ./... > ../.build/testsuite.json'
                         }
                     }
 
                     post {
                         always {
+                            dir('testsuite'){
+                                sh script: 'cat ../.build/testsuite.json | xunit -out ../.build/testsuite.xml', returnStatus: true
+                            }
                             sh script: 'cat .build/testsuite.json | tparse -all -top -slow 100', returnStatus: true
                             archiveArtifacts artifacts: '.build/testsuite.json'
                             junit '.build/testsuite.xml'
@@ -137,12 +143,15 @@ pipeline {
                         dir('testsuite'){
                             sh 'cp go.mod go-temp.mod'
                             sh 'go vet -modfile go-temp.mod -mod=mod storj.io/storj/...'
-                            sh 'go test -modfile go-temp.mod -mod=mod -parallel 4 -p 6 -vet=off -timeout 20m -json storj.io/storj/... | tee ../.build/testsuite-storj.json | xunit -out ../.build/testsuite-storj.xml'
+                            sh 'go test -modfile go-temp.mod -mod=mod -parallel 4 -p 6 -vet=off -timeout 20m -json storj.io/storj/... > ../.build/testsuite-storj.json'
                         }
                     }
 
                     post {
                         always {
+                            dir('testsuite'){
+                                sh 'cat ../.build/testsuite-storj.json | xunit -out ../.build/testsuite-storj.xml'
+                            }
                             sh script: 'cat .build/testsuite-storj.json | tparse -all -top -slow 100', returnStatus: true
                             archiveArtifacts artifacts: '.build/testsuite-storj.json'
                             junit '.build/testsuite-storj.xml'
@@ -169,24 +178,7 @@ pipeline {
 
                 stage('Go Compatibility') {
                     steps {
-                        sh 'GOOS=linux   GOARCH=amd64 go vet ./...'
-                        sh 'GOOS=linux   GOARCH=386   go vet ./...'
-                        sh 'GOOS=linux   GOARCH=arm64 go vet ./...'
-                        sh 'GOOS=linux   GOARCH=arm   go vet ./...'
-                        sh 'GOOS=windows GOARCH=amd64 go vet ./...'
-                        sh 'GOOS=windows GOARCH=386   go vet ./...'
-                        sh 'GOOS=windows GOARCH=arm64 go vet ./...'
-                        sh 'GOOS=darwin  GOARCH=amd64 go vet ./...'
-                        sh 'GOOS=darwin  GOARCH=arm64 go vet ./...'
-
-                        sh 'GOOS=linux   GOARCH=amd64 go1.14 vet ./...'
-                        sh 'GOOS=linux   GOARCH=386   go1.14 vet ./...'
-                        sh 'GOOS=linux   GOARCH=arm64 go1.14 vet ./...'
-                        sh 'GOOS=linux   GOARCH=arm   go1.14 vet ./...'
-                        sh 'GOOS=windows GOARCH=amd64 go1.14 vet ./...'
-                        sh 'GOOS=windows GOARCH=386   go1.14 vet ./...'
-                        sh 'GOOS=darwin  GOARCH=amd64 go1.14 vet ./...'
-                        sh 'GOOS=darwin  GOARCH=arm64 go1.14 vet ./...'
+                        sh 'check-cross-compile -compiler "go,go1.17.13" storj.io/uplink/...'
                     }
                 }
             }

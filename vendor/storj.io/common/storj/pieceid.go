@@ -4,11 +4,8 @@
 package storj
 
 import (
-	"crypto/hmac"
 	"crypto/rand"
-	"crypto/sha512"
 	"database/sql/driver"
-	"encoding/binary"
 
 	"github.com/zeebo/errs"
 )
@@ -64,15 +61,7 @@ func (id PieceID) Bytes() []byte { return id[:] }
 
 // Derive a new PieceID from the current piece ID, the given storage node ID and piece number.
 func (id PieceID) Derive(storagenodeID NodeID, pieceNum int32) PieceID {
-	// TODO: should the secret / content be swapped?
-	mac := hmac.New(sha512.New, id.Bytes())
-	_, _ = mac.Write(storagenodeID.Bytes()) // on hash.Hash write never returns an error
-	num := make([]byte, 4)
-	binary.BigEndian.PutUint32(num, uint32(pieceNum))
-	_, _ = mac.Write(num) // on hash.Hash write never returns an error
-	var derived PieceID
-	copy(derived[:], mac.Sum(nil))
-	return derived
+	return id.Deriver().Derive(storagenodeID, pieceNum)
 }
 
 // Marshal serializes a piece ID.

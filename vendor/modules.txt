@@ -138,6 +138,12 @@ github.com/gorilla/mux
 github.com/inconshreveable/mousetrap
 # github.com/jmespath/go-jmespath v0.4.0
 github.com/jmespath/go-jmespath
+# github.com/jtolio/eventkit v0.0.0-20221004135224-074cf276595b
+github.com/jtolio/eventkit
+github.com/jtolio/eventkit/pb
+github.com/jtolio/eventkit/utils
+# github.com/klauspost/cpuid/v2 v2.0.12
+github.com/klauspost/cpuid/v2
 # github.com/kr/pretty v0.1.0
 github.com/kr/pretty
 # github.com/kr/text v0.1.0
@@ -176,7 +182,7 @@ github.com/prometheus/procfs/internal/fs
 # github.com/sirupsen/logrus v1.8.1
 ## explicit
 github.com/sirupsen/logrus
-# github.com/spacemonkeygo/monkit/v3 v3.0.17
+# github.com/spacemonkeygo/monkit/v3 v3.0.19
 github.com/spacemonkeygo/monkit/v3
 github.com/spacemonkeygo/monkit/v3/monotime
 # github.com/spf13/cobra v1.0.0
@@ -195,10 +201,21 @@ github.com/yvasiyarov/gorelic
 # github.com/yvasiyarov/newrelic_platform_go v0.0.0-20140908184405-b21fdbd4370f
 ## explicit
 github.com/yvasiyarov/newrelic_platform_go
+# github.com/zeebo/blake3 v0.2.3
+github.com/zeebo/blake3
+github.com/zeebo/blake3/internal/alg
+github.com/zeebo/blake3/internal/alg/compress
+github.com/zeebo/blake3/internal/alg/compress/compress_pure
+github.com/zeebo/blake3/internal/alg/compress/compress_sse41
+github.com/zeebo/blake3/internal/alg/hash
+github.com/zeebo/blake3/internal/alg/hash/hash_avx2
+github.com/zeebo/blake3/internal/alg/hash/hash_pure
+github.com/zeebo/blake3/internal/consts
+github.com/zeebo/blake3/internal/utils
 # github.com/zeebo/errs v1.3.0
 ## explicit
 github.com/zeebo/errs
-# golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838
+# golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 ## explicit
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
@@ -207,14 +224,13 @@ golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/ed25519
-golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/poly1305
 golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/nacl/secretbox
 golang.org/x/crypto/pkcs12
 golang.org/x/crypto/pkcs12/internal/rc2
 golang.org/x/crypto/salsa20/salsa
-# golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
+# golang.org/x/net v0.0.0-20220624214902-1bab6f366d9e
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
 golang.org/x/net/http/httpguts
@@ -230,10 +246,10 @@ golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
-# golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+# golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde
 golang.org/x/sync/errgroup
 golang.org/x/sync/semaphore
-# golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27
+# golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
@@ -310,14 +326,16 @@ gopkg.in/check.v1
 # gopkg.in/yaml.v2 v2.4.0
 ## explicit
 gopkg.in/yaml.v2
-# storj.io/common v0.0.0-20220414110316-a5cb7172d6bf
+# storj.io/common v0.0.0-20221123115229-fed3e6651b63
 storj.io/common/base58
 storj.io/common/context2
 storj.io/common/encryption
 storj.io/common/errs2
+storj.io/common/experiment
 storj.io/common/fpath
 storj.io/common/grant
 storj.io/common/identity
+storj.io/common/internal/hmacsha512
 storj.io/common/macaroon
 storj.io/common/memory
 storj.io/common/netutil
@@ -343,7 +361,7 @@ storj.io/common/sync2
 storj.io/common/useragent
 storj.io/common/uuid
 storj.io/common/version
-# storj.io/drpc v0.0.30
+# storj.io/drpc v0.0.32
 storj.io/drpc
 storj.io/drpc/drpcconn
 storj.io/drpc/drpcctx
@@ -357,10 +375,9 @@ storj.io/drpc/drpcsignal
 storj.io/drpc/drpcstream
 storj.io/drpc/drpcwire
 storj.io/drpc/internal/drpcopts
-# storj.io/uplink v1.8.2-0.20220426114611-5580401cd102
+# storj.io/uplink v1.10.0
 ## explicit
 storj.io/uplink
-storj.io/uplink/internal/telemetryclient
 storj.io/uplink/private/ecclient
 storj.io/uplink/private/eestream
 storj.io/uplink/private/metaclient

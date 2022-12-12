@@ -6,6 +6,7 @@ package uplink
 import (
 	"context"
 	"io"
+	_ "unsafe" // for go:linkname
 
 	"storj.io/common/encryption"
 	"storj.io/common/paths"
@@ -21,7 +22,8 @@ import (
 // It needs to be updated when this is updated.
 //
 //lint:ignore U1000, used with linkname
-//nolint: deadcode,unused
+//nolint:deadcode,unused
+//go:linkname dialMetainfoClient
 func dialMetainfoClient(ctx context.Context, project *Project) (_ *metaclient.Client, err error) {
 	return project.dialMetainfoClient(ctx)
 }
@@ -32,7 +34,8 @@ func dialMetainfoClient(ctx context.Context, project *Project) (_ *metaclient.Cl
 // It needs to be updated when this is updated.
 //
 //lint:ignore U1000, used with linkname
-//nolint: deadcode,unused
+//nolint:deadcode,unused
+//go:linkname encryptionParameters
 func encryptionParameters(project *Project) storj.EncryptionParameters {
 	return project.encryptionParameters
 }
@@ -43,7 +46,8 @@ func encryptionParameters(project *Project) storj.EncryptionParameters {
 // It needs to be updated when this is updated.
 //
 //lint:ignore U1000, used with linkname
-//nolint: deadcode,unused
+//nolint:deadcode,unused
+//go:linkname segmentSize
 func segmentSize(project *Project) int64 {
 	return project.segmentSize
 }
@@ -54,7 +58,8 @@ func segmentSize(project *Project) int64 {
 // It needs to be updated when this is updated.
 //
 //lint:ignore U1000, used with linkname
-//nolint: unused
+//nolint:unused
+//go:linkname encryptPath
 func encryptPath(project *Project, bucket, key string) (paths.Encrypted, error) {
 	encStore := project.access.encAccess.Store
 	encPath, err := encryption.EncryptPathWithStoreCipher(bucket, paths.NewUnencrypted(key), encStore)
@@ -67,7 +72,8 @@ func encryptPath(project *Project, bucket, key string) (paths.Encrypted, error) 
 // It needs to be updated when this is updated.
 //
 //lint:ignore U1000, used with linkname
-//nolint: unused
+//nolint:unused
+//go:linkname deriveContentKey
 func deriveContentKey(project *Project, bucket, key string) (*storj.Key, error) {
 	encStore := project.access.encAccess.Store
 	derivedKey, err := encryption.DeriveContentKey(bucket, paths.NewUnencrypted(key), encStore)
@@ -80,7 +86,8 @@ func deriveContentKey(project *Project, bucket, key string) (*storj.Key, error) 
 // It needs to be updated when this is updated.
 //
 //lint:ignore U1000, used with linkname
-//nolint: deadcode,unused
+//nolint:deadcode,unused
+//go:linkname ecPutSingleResult
 func ecPutSingleResult(ctx context.Context, project *Project, limits []*pb.AddressedOrderLimit, privateKey storj.PiecePrivateKey,
 	rs eestream.RedundancyStrategy, data io.Reader) (results []*pb.SegmentPieceUploadResult, err error) {
 	return project.ec.PutSingleResult(ctx, limits, privateKey, rs, data)
@@ -92,7 +99,8 @@ func ecPutSingleResult(ctx context.Context, project *Project, limits []*pb.Addre
 // It needs to be updated when this is updated.
 //
 //lint:ignore U1000, used with linkname
-//nolint: unused
+//nolint:unused
+//go:linkname dialMetainfoDB
 func dialMetainfoDB(ctx context.Context, project *Project) (_ *metaclient.DB, err error) {
 	return project.dialMetainfoDB(ctx)
 }

@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 	"io"
-	"io/ioutil"
 	"sort"
 	"strconv"
 	"sync"
@@ -48,6 +47,7 @@ type ecClient struct {
 
 // New creates a client from the given dialer and max buffer memory.
 func New(dialer rpc.Dialer, memoryLimit int) Client {
+
 	return &ecClient{
 		dialer:      dialer,
 		memoryLimit: memoryLimit,
@@ -60,7 +60,13 @@ func (ec *ecClient) WithForceErrorDetection(force bool) Client {
 }
 
 func (ec *ecClient) dialPiecestore(ctx context.Context, n storj.NodeURL) (*piecestore.Client, error) {
-	return piecestore.Dial(ctx, ec.dialer, n, piecestore.DefaultConfig)
+	hashAlgo := piecestore.GetPieceHashAlgo(ctx)
+	client, err := piecestore.Dial(ctx, ec.dialer, n, piecestore.DefaultConfig)
+	if err != nil {
+		return client, err
+	}
+	client.UploadHashAlgo = hashAlgo
+	return client, nil
 }
 
 func (ec *ecClient) PutSingleResult(ctx context.Context, limits []*pb.AddressedOrderLimit, privateKey storj.PiecePrivateKey, rs eestream.RedundancyStrategy, data io.Reader) (results []*pb.SegmentPieceUploadResult, err error) {
@@ -111,7 +117,7 @@ func (ec *ecClient) put(ctx context.Context, limits []*pb.AddressedOrderLimit, p
 		return nil, nil, Error.New("duplicated nodes are not allowed")
 	}
 
-	padded := encryption.PadReader(ioutil.NopCloser(data), rs.StripeSize())
+	padded := encryption.PadReader(io.NopCloser(data), rs.StripeSize())
 	readers, err := eestream.EncodeReader2(ctx, padded, rs)
 	if err != nil {
 		return nil, nil, err
@@ -206,7 +212,7 @@ func (ec *ecClient) PutPiece(ctx, parent context.Context, limit *pb.AddressedOrd
 	defer func() { err = errs.Combine(err, data.Close()) }()
 
 	if limit == nil {
-		_, _ = io.Copy(ioutil.Discard, data)
+		_, _ = io.Copy(io.Discard, data)
 		return nil, nil, nil
 	}
 

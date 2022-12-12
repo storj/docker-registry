@@ -20,7 +20,7 @@ import (
 //
 // Start or Run (only one of them, not both) must be only called once.
 type Cycle struct {
-	noCopy noCopy // nolint: structcheck
+	noCopy noCopy //nolint:structcheck
 
 	stopsent int32
 	runexec  int32
@@ -33,7 +33,8 @@ type Cycle struct {
 	stopping chan struct{}
 	stopped  chan struct{}
 
-	init sync.Once
+	init       sync.Once
+	delayStart bool
 }
 
 type (
@@ -54,6 +55,11 @@ func NewCycle(interval time.Duration) *Cycle {
 // SetInterval allows to change the interval before starting.
 func (cycle *Cycle) SetInterval(interval time.Duration) {
 	cycle.interval = interval
+}
+
+// SetDelayStart wait interval before first trigger on start/run.
+func (cycle *Cycle) SetDelayStart() {
+	cycle.delayStart = true
 }
 
 func (cycle *Cycle) initialize() {
@@ -89,8 +95,10 @@ func (cycle *Cycle) Run(ctx context.Context, fn func(ctx context.Context) error)
 
 	choreCtx := monkit.ResetContextSpan(ctx)
 
-	if err := fn(choreCtx); err != nil {
-		return err
+	if !cycle.delayStart {
+		if err := fn(choreCtx); err != nil {
+			return err
+		}
 	}
 	for {
 		// prioritize stopping messages

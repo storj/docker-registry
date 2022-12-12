@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"storj.io/common/pb"
+	"storj.io/common/rpc/rpctracing"
 )
 
 // EncodeOrderLimit encodes order limit into bytes for signing. Removes signature from serialized limit.
@@ -51,6 +52,7 @@ func EncodeOrderLimit(ctx context.Context, limit *pb.OrderLimit) (_ []byte, err 
 
 // EncodeOrder encodes order into bytes for signing. Removes signature from serialized order.
 func EncodeOrder(ctx context.Context, order *pb.Order) (_ []byte, err error) {
+	ctx = rpctracing.WithoutDistributedTracing(ctx)
 	defer mon.Task()(&ctx)(&err)
 
 	// protobuf has problems with serializing types with nullable=false
@@ -77,6 +79,7 @@ func EncodePieceHash(ctx context.Context, hash *pb.PieceHash) (_ []byte, err err
 	signing.PieceId = hash.PieceId
 	signing.Hash = hash.Hash
 	signing.PieceSize = hash.PieceSize
+	signing.HashAlgorithm = hash.HashAlgorithm
 	if !hash.Timestamp.IsZero() {
 		signing.Timestamp = &hash.Timestamp
 	}

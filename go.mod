@@ -33,7 +33,7 @@ require (
 	github.com/yvasiyarov/gorelic v0.0.0-20141212073537-a9bba5b9ab50
 	github.com/yvasiyarov/newrelic_platform_go v0.0.0-20140908184405-b21fdbd4370f // indirect
 	github.com/zeebo/errs v1.3.0
-	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	google.golang.org/api v0.1.0
 	// when updating google.golang.org/cloud, update (or remove) the replace
@@ -41,7 +41,7 @@ require (
 	google.golang.org/cloud v0.0.0-20151119220103-975617b05ea8
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127
 	gopkg.in/yaml.v2 v2.4.0
-	storj.io/uplink v1.8.2-0.20220426114611-5580401cd102
+	storj.io/uplink v1.10.0
 )
 
 // Prevent unwanted updates of grpc. In our codebase, it's a dependency of

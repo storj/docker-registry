@@ -84,6 +84,7 @@ message Bucket {
 
 message BucketListItem {
     bytes             name = 1;
+    bytes             user_agent = 3;
 
     google.protobuf.Timestamp created_at = 2 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
 }
@@ -177,7 +178,7 @@ message Object {
     }
 
     bytes  bucket         = 1;
-    bytes  encrypted_path = 2;
+    bytes  encrypted_object_key = 2;
     int32  version        = 3;
     Status status         = 4;
 
@@ -210,7 +211,7 @@ message ObjectBeginRequest {
     RequestHeader header = 15;
 
     bytes  bucket = 1;
-    bytes  encrypted_path = 2;
+    bytes  encrypted_object_key = 2;
     int32  version = 3;
 
     google.protobuf.Timestamp expires_at = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
@@ -225,7 +226,7 @@ message ObjectBeginRequest {
 
 message ObjectBeginResponse {
     bytes  bucket = 1;
-    bytes  encrypted_path = 2;
+    bytes  encrypted_object_key = 2;
     int32  version = 3;
 
     bytes  stream_id = 4 [(gogoproto.customtype) = "StreamID", (gogoproto.nullable) = false];
@@ -239,7 +240,11 @@ message ObjectCommitRequest {
 
     bytes stream_id = 1 [(gogoproto.customtype) = "StreamID", (gogoproto.nullable) = false];
 
-    bool override_encrypted_metadata = 5;
+    // skip_override_encrypted_metadata is used to control if we want to override metadata on commit
+    // message which can lead to overriding existing metadata. We need to have flag where default (false)
+    // value will be backward compatible with old uplinks, default false means metadata will be always
+    // set by older uplinks.
+    bool  skip_override_encrypted_metadata = 5;
     bytes encrypted_metadata_nonce = 2 [(gogoproto.customtype) = "Nonce", (gogoproto.nullable) = false];
     bytes encrypted_metadata = 3; // TODO: set maximum size limit
     bytes encrypted_metadata_encrypted_key = 4;
@@ -251,7 +256,7 @@ message ObjectCommitResponse {
 message ObjectListPendingStreamsRequest {
     RequestHeader header = 15;
     bytes  bucket = 1;
-    bytes  encrypted_path = 2;
+    bytes  encrypted_object_key = 2;
     bytes  stream_id_cursor = 3;
     int32  limit = 4;
 }
@@ -326,14 +331,18 @@ message ObjectGetRequest {
     RequestHeader header = 15;
 
     bytes  bucket = 1;
-    bytes  encrypted_path = 2;
+    bytes  encrypted_object_key = 2;
     int32  version = 3;
 
-    // feature flag used by satellite to determine if uplink is
+    // Feature flag used by satellite to determine if uplink is
     // using RS per object or RS per segment. If flag is set to false
     // satellite will try to get RS from one of existing segments
     // (e.g. first). If flag is set to true satellite won't return RS
     // value in response for this request.
+    //
+    // Redundancy scheme on object level is a legacy feature:
+    // it is always determined per segment.
+    // Therefor, this flag should always be set to true.
     bool redundancy_scheme_per_segment = 4;
 }
 
@@ -366,7 +375,7 @@ message ObjectListResponse {
 }
 
 message ObjectListItem {
-    bytes  encrypted_path = 1;
+    bytes  encrypted_object_key = 1;
     int32  version        = 2;
     Object.Status status  = 3;
 
@@ -396,7 +405,7 @@ message ObjectBeginDeleteRequest {
     RequestHeader header = 15;
 
     bytes  bucket = 1;
-    bytes  encrypted_path = 2;
+    bytes  encrypted_object_key = 2;
     int32  version = 3;
     int32  status = 4;
     bytes  stream_id = 5 [(gogoproto.customtype) = "StreamID", (gogoproto.nullable) = true];
@@ -420,7 +429,7 @@ message ObjectGetIPsRequest {
     RequestHeader header = 15;
 
     bytes  bucket = 1;
-    bytes  encrypted_path = 2;
+    bytes  encrypted_object_key = 2;
     int32  version = 3;
 }
 
