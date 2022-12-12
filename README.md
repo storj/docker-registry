@@ -15,7 +15,7 @@ And pushing/pulling image locally:
 docker push localhost:9999/elek/herbstag
 ```
 
-The image will be storared in the Storj bucket
+The image will be stored in the Storj bucket
 
 The driver is also available in this PR: https://github.com/distribution/distribution/pull/3638
 
