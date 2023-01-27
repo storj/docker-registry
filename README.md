@@ -6,7 +6,7 @@ Can be tested with starting local registry:
 
 
 ```
-docker run -p 9999:5000 -e REGISTRY_STORAGE_STORJ_BUCKET=docker -e REGISTRY_STORAGE_STORJ_ACCESSGRANT=$(cat /tmp/grant) storjlabs/docker-registry
+docker run -p 9999:5000 -e REGISTRY_STORAGE=storj -e REGISTRY_STORAGE_STORJ_BUCKET=docker -e REGISTRY_STORAGE_STORJ_ACCESSGRANT=$(cat /tmp/grant) storjlabs/docker-registry
 ```
 
 And pushing/pulling image locally:
