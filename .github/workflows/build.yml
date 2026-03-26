@@ -12,7 +12,7 @@ on:
       - '*'
 
 env:
-  DOCKERHUB_SLUG: distribution/distribution
+  DOCKERHUB_SLUG: storjlabs/docker-registry
 
 jobs:
   build:
@@ -20,26 +20,26 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       -
         name: Docker meta
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ env.DOCKERHUB_SLUG }}
           ### versioning strategy
           ### push semver tag v3.2.1 on main (default branch)
-          # distribution/distribution:3.2.1
-          # distribution/distribution:3.2
-          # distribution/distribution:3
-          # distribution/distribution:latest
+          # storjlabs/docker-registry:3.2.1
+          # storjlabs/docker-registry:3.2
+          # storjlabs/docker-registry:3
+          # storjlabs/docker-registry:latest
           ### push semver prelease tag v3.0.0-beta.1 on main (default branch)
-          # distribution/distribution:3.0.0-beta.1
+          # storjlabs/docker-registry:3.0.0-beta.1
           ### push on main
-          # distribution/distribution:edge
+          # storjlabs/docker-registry:edge
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -50,18 +50,21 @@ jobs:
             org.opencontainers.image.title=Distribution
             org.opencontainers.image.description=The toolkit to pack, ship, store, and deliver container content
       -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
       -
         name: Login to DockerHub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Build artifacts
-        uses: docker/bake-action@v1
+        uses: docker/bake-action@v4
         with:
           targets: artifact-all
       -
@@ -70,14 +73,14 @@ jobs:
           mv ./bin/**/* ./bin/
       -
         name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: registry
           path: ./bin/*
           if-no-files-found: error
       -
         name: Build image
-        uses: docker/bake-action@v1
+        uses: docker/bake-action@v4
         with:
           files: |
             ./docker-bake.hcl

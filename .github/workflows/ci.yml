@@ -14,7 +14,7 @@ jobs:
   build:
     strategy:
       matrix:
-        go-version: ["1.16.x", "1.17.x"]
+        go-version: ["1.22.x", "1.23.x"]
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
     env:
@@ -26,13 +26,13 @@ jobs:
       COMMIT_RANGE: ${{ github.event_name == 'pull_request' && format('{0}..{1}',github.event.pull_request.base.sha, github.event.pull_request.head.sha) || format('{0}..{1}', github.event.before, github.event.after) }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         path: src/github.com/distribution/distribution
         fetch-depth: 50
 
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go-version }}
 
@@ -53,6 +53,6 @@ jobs:
         make binaries
         if [ "$GOOS" = "linux" ]; then make coverage ; fi
 
-    - uses: codecov/codecov-action@v1
+    - uses: codecov/codecov-action@v4
       with:
         directory: ./src/github.com/distribution/distribution
